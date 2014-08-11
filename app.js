@@ -6,11 +6,11 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
-var ihttp = require('http');
+var http = require('http');
 var path = require('path');
 var partials = require('express-partials');
 var MongoStore = require('connect-mongo')(express);
-var settings = require('../settings');
+var settings = require('./settings');
 
 var app = express();
 
@@ -24,7 +24,7 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(express.router(routes));
+app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.cookieParser());
 app.use(express.session({
@@ -40,6 +40,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+routes(app);
+/*
 app.get('/', routes.index);
 app.get('/u/:user', routes.user);
 app.post('/post', routes.post);
@@ -48,6 +50,10 @@ app.post('reg', routes.doReg);
 app.get('/login', routes.login);
 app.post('/login', routes.doLogin);
 app.get('logout', routes.logout);
+*/
+app.get('/mongodb', function(req, res) {
+	res.send('Test connect mongodb.');
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
