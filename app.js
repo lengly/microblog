@@ -43,12 +43,6 @@ app.use(function(req, res, next){
 	next();
 });
 
-
-
-
-
-
-
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 // development only
@@ -57,17 +51,6 @@ if ('development' == app.get('env')) {
 }
 
 routes(app);
-/*
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/', routes.index);
-app.get('/u/:user', routes.user);
-app.post('/post', routes.post);
-app.get('/reg', routes.reg);
-app.post('reg', routes.doReg);
-app.get('/login', routes.login);
-app.post('/login', routes.doLogin);
-app.get('logout', routes.logout);
-*/
 app.get('/mongodb', function(req, res) {
 	res.send('Test connect mongodb.');
 });
