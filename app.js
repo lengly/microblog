@@ -11,6 +11,7 @@ var path = require('path');
 var partials = require('express-partials');
 var MongoStore = require('connect-mongo')(express);
 var settings = require('./settings');
+var flash = require('connect-flash');
 
 var app = express();
 
@@ -24,7 +25,6 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.cookieParser());
 app.use(express.session({
@@ -33,8 +33,24 @@ app.use(express.session({
 		db: settings.db
 	})
 }));
+app.use(flash());
+
+//用来代替原书中dynamicHelpers的代码  必须在app.use(app.router)之前
+app.use(function(req, res, next){
+	res.locals.user = req.session.user;
+	res.locals.error = req.flash('error');
+	res.locals.success = req.flash('success');
+	next();
+});
 
 
+
+
+
+
+
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -42,6 +58,7 @@ if ('development' == app.get('env')) {
 
 routes(app);
 /*
+app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', routes.index);
 app.get('/u/:user', routes.user);
 app.post('/post', routes.post);
