@@ -10,7 +10,7 @@ User.prototype.save = function save(callback) {
 	//存入Mongodb文档
 	var user = {
 		name: this.name,
-		passowrd: this.password,
+		password: this.password,
 	};
 	mongodb.open(function(err, db) {
 		if (err) {
