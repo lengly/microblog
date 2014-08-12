@@ -10,10 +10,12 @@ module.exports = function(app) {
 		res.render('index', { title: '首页', layout: 'layout'});
 	});
 
+	app.get('/reg', checkNotLogin);
 	app.get('/reg', function(req,res) {
 		res.render('reg', { title: '用户注册', layout:'layout'});
 	});
 
+	app.post('/reg', checkNotLogin);
 	app.post('/reg', function(req,res) {
 		//检查用户两次输入的口令是否一致
 		if (req.body['password-repeat'] != req.body['password']) {
@@ -50,12 +52,14 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get('/login', checkNotLogin);
 	app.get('/login', function(req, res) {
 		res.render('login', {
 			title: '用户登入',
 		});
 	});
 
+	app.post('/login', checkNotLogin);
 	app.post('/login', function(req, res) {
 		//生成口令的散列值
 		var md5 = crypto.createHash('md5');
@@ -76,9 +80,28 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get('/logout', checkLogin);
 	app.get('/logout', function(req, res) {
 		req.session.user = null;
 		req.flash('success', '登出成功');
 		res.redirect('/');
 	});
 };
+
+function checkLogin(req, res, next) {
+	if (!req.session.user) {
+		req.flash('error', '未登入');
+		return res.redirect('/login');
+	}
+	next();
+}
+
+function checkNotLogin(req, res, next) {
+	if (req.session.user) {
+		req.flash('error', '已登入');
+		return res.redirect('/');
+	}
+	next();
+}
+
+
